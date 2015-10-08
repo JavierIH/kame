@@ -33,9 +33,18 @@ class Kame(object):
         self.osc.append(octosnake.Oscillator())
         self.osc.append(octosnake.Oscillator())
         self.osc.append(octosnake.Oscillator())
+        self.osc.append(octosnake.Oscillator())
+        self.osc.append(octosnake.Oscillator())
+        self.osc.append(octosnake.Oscillator())
+        self.osc.append(octosnake.Oscillator())
 
         self.osc[1].ref_time = self.osc[0].ref_time
         self.osc[2].ref_time = self.osc[0].ref_time
+        self.osc[3].ref_time = self.osc[0].ref_time
+        self.osc[4].ref_time = self.osc[0].ref_time
+        self.osc[5].ref_time = self.osc[0].ref_time
+        self.osc[6].ref_time = self.osc[0].ref_time
+        self.osc[7].ref_time = self.osc[0].ref_time
 
         #Setting up servo controller
         for i in range(len(self._servo_pins)):
@@ -43,15 +52,22 @@ class Kame(object):
 
         self.controller.servos[self._servo_pins[1]].reverse = True
         self.controller.servos[self._servo_pins[3]].reverse = True
+        self.controller.servos[self._servo_pins[5]].reverse = True
+        self.controller.servos[self._servo_pins[6]].reverse = True
 
 
     def walk(self, steps):
 
         T = 4000                 #milliseconds 
-        period = [T, T, T, 10000]
-        amplitude = [40, 40, 30, 0]
-        offset = [0, 0, 0, 0]
-        phase = [0, 180, 90, 0]
+        period = [T, T, T, T, T, T, T, T]
+        amplitude = [0, 0, 0, 0, 0, 0, 0, 0]
+        offset = [10, 10, 10, 10, 10, 10, 10, 10]
+        phase = [0, 0, 0, 0, 0, 0, 0, 0]
+
+        self.osc[1].wave = octosnake.semiSin
+        self.osc[3].wave = octosnake.semiSin
+        self.osc[5].wave = octosnake.semiSin
+        self.osc[7].wave = octosnake.semiSin
 
         for i in range(len(self.osc)):
             self.osc[i].period = period[i]
@@ -64,15 +80,8 @@ class Kame(object):
             try:
                 for i in range(len(self.osc)):
                     self.osc[i].refresh()
-
-                self.controller.move(self._servo_pins[0], self.osc[0].output+15)
-                self.controller.move(self._servo_pins[1], self.osc[1].output+15)
-                self.controller.move(self._servo_pins[2], self.osc[1].output+30)
-                self.controller.move(self._servo_pins[3], self.osc[0].output+30)
-                self.controller.move(self._servo_pins[4], self.osc[2].output)
-                self.controller.move(self._servo_pins[5], self.osc[2].output)
-                self.controller.move(self._servo_pins[6], self.osc[2].output)
-                self.controller.move(self._servo_pins[7], self.osc[2].output)
+                for i in range(len(self.osc)):
+                    self.controller.move(self._servo_pins[i], self.osc[i].output)
 
 
             except IOError:
