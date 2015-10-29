@@ -31,12 +31,12 @@ class Kame(object):
         self.osc = []
         self.osc.append(octosnake.Oscillator())
         self.osc.append(octosnake.Oscillator())
+        self.osc.append(octosnake.Oscillator(octosnake.semiSin))
+        self.osc.append(octosnake.Oscillator(octosnake.semiSin))
         self.osc.append(octosnake.Oscillator())
         self.osc.append(octosnake.Oscillator())
-        self.osc.append(octosnake.Oscillator())
-        self.osc.append(octosnake.Oscillator())
-        self.osc.append(octosnake.Oscillator())
-        self.osc.append(octosnake.Oscillator())
+        self.osc.append(octosnake.Oscillator(octosnake.semiSin))
+        self.osc.append(octosnake.Oscillator(octosnake.semiSin))
 
         self.osc[1].ref_time = self.osc[0].ref_time
         self.osc[2].ref_time = self.osc[0].ref_time
@@ -57,17 +57,19 @@ class Kame(object):
 
 
     def walk(self, steps):
-
-        T = 4000                 #milliseconds 
+        
+        x_amp = 15
+        z_amp = 30
+        T = 400                 #milliseconds 
         period = [T, T, T, T, T, T, T, T]
-        amplitude = [0, 0, 0, 0, 0, 0, 0, 0]
-        offset = [10, 10, 10, 10, 10, 10, 10, 10]
-        phase = [0, 0, 0, 0, 0, 0, 0, 0]
+        amplitude = [x_amp, x_amp, z_amp, z_amp, x_amp, x_amp, z_amp, z_amp]
+        offset = [0, 0, -25, -25, 0, 0, -25, -25]
+        phase = [90, 270, 0, 180, 270, 90, 180, 0]
 
-        self.osc[1].wave = octosnake.semiSin
-        self.osc[3].wave = octosnake.semiSin
-        self.osc[5].wave = octosnake.semiSin
-        self.osc[7].wave = octosnake.semiSin
+        #self.osc[2].wave = octosnake.semiSin
+        #self.osc[3].wave = octosnake.semiSin
+        #self.osc[6].wave = octosnake.semiSin
+        #self.osc[7].wave = octosnake.semiSin
 
         for i in range(len(self.osc)):
             self.osc[i].period = period[i]
@@ -86,6 +88,101 @@ class Kame(object):
 
             except IOError:
                 self._bus = smbus.SMBus(self._i2c_bus)
+
+    def turn(self, steps):
+
+        x_amp = 15
+        z_amp = 30
+        T = 300                 #milliseconds 
+        period = [T, T, T, T, T, T, T, T]
+        amplitude = [x_amp, x_amp, z_amp, z_amp, x_amp, x_amp, z_amp, z_amp]
+        offset = [30, 30, -30, -30, -30, -30, -30, -30]
+        phase = [0, 0, 90, 270, 180, 180, 270, 90]
+
+        #self.osc[2].wave = octosnake.semiSin
+        #self.osc[3].wave = octosnake.semiSin
+        #self.osc[6].wave = octosnake.semiSin
+        #self.osc[7].wave = octosnake.semiSin
+
+        for i in range(len(self.osc)):
+            self.osc[i].period = period[i]
+            self.osc[i].amplitude = amplitude[i]
+            self.osc[i].phase = phase[i]
+            self.osc[i].offset = offset[i]
+
+        final = time.time() + float(T*steps/1000)
+        while time.time() < final:
+            try:
+                for i in range(len(self.osc)):
+                    self.osc[i].refresh()
+                for i in range(len(self.osc)):
+                    self.controller.move(self._servo_pins[i], self.osc[i].output)
+
+
+            except IOError:
+                self._bus = smbus.SMBus(self._i2c_bus)
+
+    def dance(self, steps):
+
+        x_amp = 0
+        z_amp = 30
+        T = 1000                 #milliseconds 
+        period = [T, T, T, T, T, T, T, T]
+        amplitude = [x_amp, x_amp, z_amp, z_amp, x_amp, x_amp, z_amp, z_amp]
+        offset = [45, 45, -25, -25, -45, -45, -25, -25]
+        phase = [0, 0, 0, 90, 0, 0, 270, 180]
+
+        #self.osc[2].wave = octosnake.semiSin
+        #self.osc[3].wave = octosnake.semiSin
+        #self.osc[6].wave = octosnake.semiSin
+        #self.osc[7].wave = octosnake.semiSin
+
+        for i in range(len(self.osc)):
+            self.osc[i].period = period[i]
+            self.osc[i].amplitude = amplitude[i]
+            self.osc[i].phase = phase[i]
+            self.osc[i].offset = offset[i]
+
+        final = time.time() + float(T*steps/1000)
+        while time.time() < final:
+            try:
+                for i in range(len(self.osc)):
+                    self.osc[i].refresh()
+                for i in range(len(self.osc)):
+                    self.controller.move(self._servo_pins[i], self.osc[i].output)
+
+
+            except IOError:
+                self._bus = smbus.SMBus(self._i2c_bus)
+
+    def run(self, steps):
+
+        x_amp = 10
+        z_amp = 10
+        T = 650                 #milliseconds 
+        period = [T, T, T, T, T, T, T, T]
+        amplitude = [20, 20, 20, 20, 35, 35, 20, 20]
+        offset = [35, 35, -60, -60, 0, 0, 0, 0]
+        phase = [270, 270, 0, 0, 180, 180, 270, 270]
+
+        for i in range(len(self.osc)):
+            self.osc[i].period = period[i]
+            self.osc[i].amplitude = amplitude[i]
+            self.osc[i].phase = phase[i]
+            self.osc[i].offset = offset[i]
+
+        final = time.time() + float(T*steps/1000)
+        while time.time() < final:
+            try:
+                for i in range(len(self.osc)):
+                    self.osc[i].refresh()
+                for i in range(len(self.osc)):
+                    self.controller.move(self._servo_pins[i], self.osc[i].output)
+
+
+            except IOError:
+                self._bus = smbus.SMBus(self._i2c_bus)
+
 
     def walk_borrico(self, steps):
 
