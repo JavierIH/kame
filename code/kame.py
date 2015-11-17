@@ -92,10 +92,10 @@ class Kame(object):
 
     def walk2(self, steps):
 
-        x_amp = 15#15
+        x_amp = 20#15
         z_amp = 15
-        front_x = 10
-        T = 500.0                 #milliseconds
+        front_x = 12
+        T = 450.0#500.0                 #milliseconds
         global_phase = 90
         period = [T, T, T/2, T/2, T, T, T/2, T/2]
         amplitude = [x_amp, x_amp, z_amp, z_amp, x_amp, x_amp, z_amp, z_amp]
@@ -182,7 +182,7 @@ class Kame(object):
         T = 1000                 #milliseconds
         period = [T, T, T, T, T, T, T, T]
         amplitude = [x_amp, x_amp, z_amp, z_amp, x_amp, x_amp, z_amp, z_amp]
-        offset = [45, 45, -25, -25, -45, -45, -25, -25]
+        offset = [45, 45, -30, 30, -45, -45, 30, -30]
         phase = [0, 0, 0, 90, 0, 0, 270, 180]
 
         #self.osc[2].wave = octosnake.semiSin
