@@ -1,8 +1,11 @@
 from kame import Kame
 
-robot = Kame([0, -10, 5, 12, -14, 0, 20, 4], [0, 1, 13, 14, 2, 3, 12, 15])
+robot = Kame([-5, -14, 4, 20, -10, 0, 12, 5], [3, 2, 15, 12, 1, 0,  14, 13])
+
 # robot.zero()
 # robot.jump()
-robot.turnR(20)
-# robot.walk(20)
-# robot.dance(5)
+# robot.turnR(4)
+# robot.turnR(4)
+# robot.walk(4)
+# robot.turnL(4)
+# robot.back(20)
