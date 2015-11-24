@@ -68,12 +68,11 @@ class Kame(object):
         self.controller.servos[self._servo_pins[5]].reverse = True
         # self.controller.servos[self._servo_pins[6]].reverse = True
 
-    def back(self, steps):
+    def back(self, steps, T=750.0):
 
         x_amp = 20
         z_amp = 15
         front_x = 8
-        T = 750.0
         i = 0
 
         period = [T, T, T/2, T/2, T, T, T/2, T/2]
@@ -117,12 +116,11 @@ class Kame(object):
             except IOError:
                 self._bus = smbus.SMBus(self._i2c_bus)
 
-    def walk(self, steps):
+    def walk(self, steps, T=450.0):
 
         x_amp = 20
         z_amp = 15
         front_x = -12
-        T = 450.0
         period = [T, T, T/2, T/2, T, T, T/2, T/2]
         amplitude = [x_amp, x_amp, z_amp, z_amp, x_amp, x_amp, z_amp, z_amp]
         offset = [front_x, front_x, -25, -25, front_x, front_x, -25, -25]
@@ -164,11 +162,10 @@ class Kame(object):
             except IOError:
                 self._bus = smbus.SMBus(self._i2c_bus)
 
-    def turnL(self, steps):
+    def turnL(self, steps, T=500.0):
 
         x_amp = 15
         z_amp = 15
-        T = 500
         period = [T, T, T, T, T, T, T, T]
         amplitude = [x_amp, x_amp, z_amp, z_amp, x_amp, x_amp, z_amp, z_amp]
         offset = [30, 30, -30, 30, -30, -30, 30, -30]
@@ -191,11 +188,10 @@ class Kame(object):
             except IOError:
                 self._bus = smbus.SMBus(self._i2c_bus)
 
-    def turnR(self, steps):
+    def turnR(self, steps, T=500.0):
 
         x_amp = 15
         z_amp = 15
-        T = 500
         period = [T, T, T, T, T, T, T, T]
         amplitude = [x_amp, x_amp, z_amp, z_amp, x_amp, x_amp, z_amp, z_amp]
         offset = [30, 30, -30, 30, -30, -30, 30, -30]
@@ -257,12 +253,12 @@ class Kame(object):
         self.controller.move(self._servo_pins[3], -10)
         self.controller.move(self._servo_pins[6], -10)
         self.controller.move(self._servo_pins[7], 10)
-        time.sleep(1)
+        time.sleep(0.3)
 
-        self.controller.move(self._servo_pins[2], -25)
-        self.controller.move(self._servo_pins[3], 25)
-        self.controller.move(self._servo_pins[6], 25)
-        self.controller.move(self._servo_pins[7], -25)
+        self.controller.move(self._servo_pins[2], -35)
+        self.controller.move(self._servo_pins[3], 35)
+        self.controller.move(self._servo_pins[6], 35)
+        self.controller.move(self._servo_pins[7], -35)
 
         time.sleep(0.075)
         self.controller.move(self._servo_pins[2], 10)
