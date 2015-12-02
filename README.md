@@ -7,7 +7,7 @@
 Kame is an experimental quadruped walker with PLM legs. The main controller of this robot is a Raspberry Pi 2. Main code for locomotion and gaits is written in Python using oscillator algorithms.
 
 <p align="center">
-<img src="doc/images/kame.jpg" width="600" align="center">
+<img src="doc/images/kame.jpg" align="center">
 </p>
 
 # License
