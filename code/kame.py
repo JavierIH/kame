@@ -3,6 +3,8 @@ import sys
 sys.path.append(os.path.abspath(__file__).replace('kame/code/kame.py', '') + 'pybotics/')
 
 import time
+import numpy as np
+import math
 import smbus
 from driver.pca9685.pca9685 import ServoController
 import control.octosnake.octosnake as octosnake
@@ -245,6 +247,17 @@ class Kame(object):
         for i in range(len(self._servo_pins)):
             self.controller.move(self._servo_pins[i], 0)
 
+    def home(self):
+        self.controller.move(self._servo_pins[0], 10)
+        self.controller.move(self._servo_pins[1], 10)
+        self.controller.move(self._servo_pins[2], 0)
+        self.controller.move(self._servo_pins[3], 0)
+        self.controller.move(self._servo_pins[4], -10)
+        self.controller.move(self._servo_pins[5], -10)
+        self.controller.move(self._servo_pins[6], 0)
+        self.controller.move(self._servo_pins[7], 0)
+
+
     def jump(self):
         for i in range(len(self._servo_pins)):
             self.controller.move(self._servo_pins[i], 0)
@@ -255,13 +268,84 @@ class Kame(object):
         self.controller.move(self._servo_pins[7], 10)
         time.sleep(0.3)
 
-        self.controller.move(self._servo_pins[2], -35)
-        self.controller.move(self._servo_pins[3], 35)
-        self.controller.move(self._servo_pins[6], 35)
-        self.controller.move(self._servo_pins[7], -35)
+        amp = 50
+        self.controller.move(self._servo_pins[2], -amp)
+        self.controller.move(self._servo_pins[3], amp)
+        self.controller.move(self._servo_pins[6], amp)
+        self.controller.move(self._servo_pins[7], -amp)
 
-        time.sleep(0.075)
+        time.sleep(0.08)
         self.controller.move(self._servo_pins[2], 10)
         self.controller.move(self._servo_pins[3], -10)
         self.controller.move(self._servo_pins[6], -10)
         self.controller.move(self._servo_pins[7], 10)
+
+    def omnimove(self, global_phase, inclination, x, y):
+
+        speed = np.sqrt(x**2 + y**2)
+        speed = 1 if speed > 1 else speed
+
+        inclination = inclination * 25
+
+        direction = math.cos(np.arctan2(y, x))
+        print 'direction: ', direction
+        T = 2200 - 2000*speed
+
+        x_u = 1 if x > 0 else -1
+        y_u = 1 if y > 0 else -1
+
+        init_ref = time.time()
+        final_ref = init_ref +  25.0/1000
+
+        for i in range(len(self.osc)):
+            self.osc[i].ref_time = init_ref
+
+        #init_ref = init_ref + T * (global_phase/360)
+        #init_ref = time.time()
+        #side = int((time.time()-final_ref) / (T/2000.0)) % 2
+
+        x_amp = 20#20
+        z_amp = 15#15
+        front_x = y * 15
+        period = [T, T, T, T, T, T, T, T]
+        amplitude = [x_amp, x_amp, z_amp, z_amp, x_amp, x_amp, z_amp, z_amp]
+        offset = [front_x, front_x, -25+inclination, 25+inclination, front_x, front_x, 25-inclination, -25-inclination]
+        phase = []
+        phase.append(90*-y_u - 90*direction) #OK
+        phase.append(90*+y_u + 90*direction) #OK
+        phase.append(180 - 90*abs(direction))
+        phase.append(180 - 90*abs(direction))
+        phase.append(90*+y_u - 90*direction) #OK
+        phase.append(90*-y_u + 90*direction) #OK
+        phase.append(180 - 90*abs(direction))
+        phase.append(180 - 90*abs(direction))
+
+    # wlak  phase = [90,  270,      90,    270,    270,      90,      270,       90]
+    # back        phase = [270, 90, i, 270, 90, 270, i, i]
+    # turnR phase = [0,    0,       90,     90,    180,      180,     90,        90]
+
+
+
+
+        while(final_ref > time.time()):
+            for i in range(len(self.osc)):
+                self.osc[i].period = period[i]
+                self.osc[i].amplitude = amplitude[i] * speed
+                self.osc[i].phase = phase[i] + global_phase
+                self.osc[i].offset = offset[i]
+
+            try:
+                for i in range(len(self.osc)):
+                    self.osc[i].refresh()
+
+                for i in range(len(self.osc)):
+                    self.controller.move(self._servo_pins[i], self.osc[i].output)
+
+
+            except IOError:
+                self._bus = smbus.SMBus(self._i2c_bus)
+
+        present_phase = float(self.osc[5].delta_time)/self.osc[5].period * 360
+        #print 'Fase actual: ', present_phase
+        print 'Deltatime', self.osc[5].delta_time
+        return present_phase
