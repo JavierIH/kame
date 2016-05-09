@@ -1,6 +1,4 @@
-<p align="center">
-<img src="doc/images/bq-logo-human-right-technology.png" width="300" align="center">
-</p>
+[Are you looking for the tiny version powered by an esp8266?](https://github.com/JavierIH/miniKame)
 
 # KAME
 
@@ -15,3 +13,9 @@ Kame is an experimental quadruped walker with PLM legs. The main controller of t
 <p align="right">
 <img src="doc/images/by-sa.png" width="200" align = "center">
 </p>
+
+# Other
+
+<img src="doc/images/bq-logo-human-right-technology.png" width="240" align="center">
+
+Sponsored by BQ till march 2016
